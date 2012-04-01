@@ -1,46 +1,30 @@
-(ns jsonGenerator (:use clojure.test))
+(ns jsonGenerator)
 
-
-(with-test
-  (defn quoted [n]
+(defn quoted [n]
     (let [qmark "\""]
     (str qmark n qmark)))
-    (is (= "\"Darth Vader\"" (quoted "Darth Vader")))
-  )
 
-(with-test
-  (defn key-value [keyvalue] 
-    (str (quoted (first keyvalue)) " : " (quoted (second keyvalue))))
-  (is (= "\"firstName\" : \"Darth\"" (key-value ["firstName" "Darth"]))))
-
-(with-test 
-  (defn split-into-pairs [x]
+(defn split-into-pairs [x]
     ((fn [v result]
     (if (empty? v) result
       (recur (-> v rest rest) (into result [[(first v) (second v)]]))
       )) x [])
-    )
-    (is (= [[1 2] [3 4]] (split-into-pairs [1 2 3 4])))
-    (is (= [[1 2] [3 4] [5 6]] (split-into-pairs [1 2 3 4 5 6])))
-)
+ )   
 
-(with-test
-  (defn stringyfy-key-values [key-values]
-    (map key-value (split-into-pairs key-values))
-  )
-  (is (= ["\"firstName\" : \"Darth\"" "\"lastName\" : \"Vader\""] (stringyfy-key-values ["firstName" "Darth" "lastName" "Vader"])))
-  )
-  
-
-(with-test
-  (defn key-value-list [key-values]
+(defn key-value-list [key-values]
+    (let [key-value 
+          (fn [keyvalue]  
+            (str (quoted 
+                   (first keyvalue)) 
+                 " : " 
+                 (if (vector? (second keyvalue)) (key-value-list (second keyvalue)) (quoted (second keyvalue)))))
+          ]
+    (let [stringyfy-key-values (fn [key-values] (map key-value (split-into-pairs key-values)))]
     (str "{" (reduce str (interpose ", " (stringyfy-key-values key-values))) "}") 
       )
-  (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (key-value-list ["firstName" "Darth" "lastName" "Vader"])))
-  )
+    ))
 
-(with-test 
-  (defn string-to-vector [x]
+(defn string-to-vector [x]
     (let [deep-str (fn ! [s] 
                      (if (vector? s) 
                        (vec (map ! s))
@@ -48,14 +32,8 @@
           ]
   (vec (map deep-str (eval (read-string x)))))
   )
-  (is (=  ["ab" "cd"] (string-to-vector "['ab 'cd]")))
-  )
 
-
-(with-test
-  (defn to-json [code]
+(defn to-json [code]
     (key-value-list (string-to-vector code))
     )
-  (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (to-json "['firstName 'Darth 'lastName 'Vader]")))
-  )
-
+  

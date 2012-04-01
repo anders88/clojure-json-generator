@@ -10,4 +10,11 @@ public class TestJSONGenerator {
 		String generatedJson = JSONGenerator.generate("['firstName 'Darth 'lastName 'Vader]");
 		assertThat(generatedJson).isEqualTo("{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}");
 	}
+	
+	@Test
+	public void shouldGenerateNestedStructure() throws Exception {
+		String expected = "{\"person\" : {\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}}";
+		String generatedJson = JSONGenerator.generate("['person ['firstName 'Darth 'lastName 'Vader]]");
+		assertThat(generatedJson).isEqualTo(expected);
+	}
 }
