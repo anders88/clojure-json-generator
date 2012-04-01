@@ -9,9 +9,9 @@
   )
 
 (with-test
-  (defn key-value [key value] 
-    (str (quoted key) " : " (quoted value)))
-  (is (= "\"firstName\" : \"Darth\"" (key-value "firstName" "Darth"))))
+  (defn key-value [keyvalue] 
+    (str (quoted (first keyvalue)) " : " (quoted (second keyvalue))))
+  (is (= "\"firstName\" : \"Darth\"" (key-value ["firstName" "Darth"]))))
 
 (with-test 
   (defn split-into-pairs [x]
