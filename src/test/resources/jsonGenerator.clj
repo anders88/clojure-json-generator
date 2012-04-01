@@ -39,5 +39,26 @@
   (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (key-value-list ["firstName" "Darth" "lastName" "Vader"])))
   )
 
+(with-test 
+  (defn string-to-vector [x]
+    (let [deep-str (fn ! [s] 
+                     (if (vector? s) 
+                       (vec (map ! s))
+                       (str s)))
+          ]
+  (vec (map deep-str (eval (read-string x)))))
+  )
+  (is (=  ["ab" "cd"] (string-to-vector "['ab 'cd]")))
+  )
+
+
+(with-test
+  (defn to-json [code]
+    (key-value-list (string-to-vector code))
+    )
+  (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (to-json "['firstName 'Darth 'lastName 'Vader]")))
+  )
+
+
 (run-tests)
 
