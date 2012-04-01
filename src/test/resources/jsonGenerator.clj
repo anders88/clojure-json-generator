@@ -22,14 +22,22 @@
     )
     (is (= [[1 2] [3 4]] (split-into-pairs [1 2 3 4])))
     (is (= [[1 2] [3 4] [5 6]] (split-into-pairs [1 2 3 4 5 6])))
-    )
+)
 
-; Not ready for this yet...
-;(with-test
-;  (defn key-value-list [key-values]
-;  "3")
-;  (is (= "{ \"firstName\" : \"Darth\", \"lastName\" : \"Vader\" }" (key-value-list ["firstname" "Darth" "lastname" "Vader"])))
-;  )
+(with-test
+  (defn stringyfy-key-values [key-values]
+    (map key-value (split-into-pairs key-values))
+  )
+  (is (= ["\"firstName\" : \"Darth\"" "\"lastName\" : \"Vader\""] (stringyfy-key-values ["firstName" "Darth" "lastName" "Vader"])))
+  )
+  
+
+(with-test
+  (defn key-value-list [key-values]
+    (str "{" (reduce str (interpose ", " (stringyfy-key-values key-values))) "}") 
+      )
+  (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (key-value-list ["firstName" "Darth" "lastName" "Vader"])))
+  )
 
 (run-tests)
 
