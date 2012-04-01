@@ -59,6 +59,3 @@
   (is (= "{\"firstName\" : \"Darth\", \"lastName\" : \"Vader\"}" (to-json "['firstName 'Darth 'lastName 'Vader]")))
   )
 
-
-(run-tests)
-
